@@ -6,11 +6,23 @@
 
 foam.CLASS({
   package: 'foam.u2.view',
+  name: 'EditColumnFields',
+  
+  properties: [ 
+    'id',
+    'name',
+    'shown'
+  ]
+});
+
+foam.CLASS({
+  package: 'foam.u2.view',
   name: 'EditColumnsView',
   extends: 'foam.u2.Element',
 
   requires: [
-    'foam.u2.CheckBox'
+    'foam.u2.CheckBox',
+    'foam.dao.EasyDAO'
   ],
 
   properties: [
@@ -30,7 +42,8 @@ foam.CLASS({
       class: 'Boolean',
       name: 'displaySorted',
       value: false
-    }
+    },
+    'idbDAO'
   ],
   
   methods: [
@@ -46,6 +59,14 @@ foam.CLASS({
 
       this.selected = []
 
+      this.idbDAO = foam.dao.EasyDAO.create({ 
+        seqNo: true, 
+        seqProperty: 'id', 
+        daoType: 'IDB',
+        of: this.table,
+        model: foam.u2.view.EditColumnFields
+      });
+
       for ( var i = 0 ; i < this.columns_.length ; i++ ) {
         var cb = this.CheckBox.create({
           label: this.columns_[i].label,
@@ -54,6 +75,25 @@ foam.CLASS({
 
         this.selected.push(cb.data$);
         var name = this.columns_[i].name;
+
+        var expr = foam.mlang.Expressions.create();
+
+        // Better way to do create if not exists?
+        // this.idbDAO
+        //   .where(expr.EQ(foam.u2.view.EditColumnFields.NAME, name))
+        //   .select()
+        //   .then(function(cols) {
+        //     if (cols.a.length) {
+              
+        //     } else {
+              
+        //     }
+        //   });
+
+        this.idbDAO.put(foam.u2.view.EditColumnFields.create({ 
+            name: name, 
+            shown: true 
+          }));
 
         // Subscribes updateTable listener to checkbox data
         cb.data$.sub(this.updateTable.bind(this, name));
@@ -81,6 +121,7 @@ foam.CLASS({
       //   }
       // }
       // else { ...
+      
 
       for ( var i = 0 ; i < this.columns.length ; i++ ) {
         var cbData = this.selected[i].obj.data;
@@ -93,7 +134,18 @@ foam.CLASS({
         if ( ((changedProp == curProp) && cbData) ||
              ((changedProp != curProp) && isColShown) ) {
           // Gets the table column from the column name, and pushes to cols array
-          cols.push(this.table.getAxiomByName(curProp))
+          cols.push(this.table.getAxiomByName(curProp));
+          //this.idbDAO.put({name: curProp});
+        } else {
+          var expr = foam.mlang.Expressions.create();
+          this.idbDAO
+          .where(expr.EQ(foam.u2.view.EditColumnFields.NAME, curProp))
+                .select()
+                .then(function(cols) {
+                  console.log(cols.a)
+                  // console.log('cols count: ', cols.a.length);
+                  // console.log(cols.a[0].name);
+                });
         }
       }
 
