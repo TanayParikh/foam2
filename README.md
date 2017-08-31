@@ -27,7 +27,7 @@ for any language or platform, including Android Java and iOS Swift.
 
 ## Building Java
 
-_cd src; ./gen.sh; cd ../build; mvn compile; mvn package_
+`cd src; ./gen.sh; cd ../build; mvn compile; mvn package`
 
 ## Installing Dependencies
 
@@ -46,11 +46,11 @@ All code should follow the [style guide.](doc/guides/StyleGuide.md)
 
 ## Testing
 
-* _npm test_ runs standard unit tests.
+* `npm test` runs standard unit tests.
 
-* _npm run testDebug_ runs the unit tests with a debugger.
+* `npm run testDebug` runs the unit tests with a debugger.
 
-* _npm run coverage_ runs code coverage and creates an html report in /coverage.
+* `npm run coverage` runs code coverage and creates an html report in /coverage.
 
 For in-browser testing, run your favorite web server at the root of the FOAM
 repository. In a browser, navigate to
@@ -59,7 +59,7 @@ to run the unit tests.
 
 # Documentation
 
-* _npm run doc_ generates HTML API documentation in doc/gen/.
+* `npm run doc` generates HTML API documentation in `doc/gen/`.
 
 Documentation is created by JSDoc with a plugin to account for FOAM's package
 structure and declarative nature. JSDoc modules correspond with FOAM packages.
